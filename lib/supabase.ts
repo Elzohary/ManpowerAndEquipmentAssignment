@@ -2,8 +2,8 @@ import { createClient } from '@supabase/supabase-js'
 
 // These will be your Supabase project credentials
 // You'll get these from your Supabase dashboard
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'your-supabase-url'
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'your-supabase-anon-key'
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co'
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder-key'
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
@@ -13,7 +13,7 @@ export interface JobTitle {
   name: string
   description: string
   created_at: string
-  updated_at: string
+  updated_at?: string
 }
 
 export interface WorkGroup {
@@ -21,7 +21,7 @@ export interface WorkGroup {
   name: string
   description: string
   created_at: string
-  updated_at: string
+  updated_at?: string
 }
 
 export interface Department {
@@ -29,7 +29,7 @@ export interface Department {
   name: string
   description: string
   created_at: string
-  updated_at: string
+  updated_at?: string
 }
 
 export interface ProjectType {
@@ -37,7 +37,7 @@ export interface ProjectType {
   name: string
   description: string
   created_at: string
-  updated_at: string
+  updated_at?: string
 }
 
 export interface Employee {
@@ -48,5 +48,5 @@ export interface Employee {
   department_id: string
   work_group_id: string
   created_at: string
-  updated_at: string
+  updated_at?: string
 }

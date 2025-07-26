@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { UserPlus, Search, Edit, Trash2, Filter, Wrench } from 'lucide-react';
+import { UserPlus, Search, Edit, Trash2, Filter, Wrench, Plus } from 'lucide-react';
 
 // Mock data with equipment assignments
 const mockEmployees = [
@@ -183,9 +183,9 @@ export function EmployeeDirectory() {
           </p>
         </div>
         <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <UserPlus className="h-4 w-4 mr-2" />
+          <DialogTrigger>
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white shadow-md">
+              <Plus className="h-4 w-4 mr-2" />
               Add Employee
             </Button>
           </DialogTrigger>

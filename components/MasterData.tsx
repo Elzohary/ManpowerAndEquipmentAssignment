@@ -265,8 +265,9 @@ export function MasterData() {
         </div>
 
         {/* Tabs Section */}
-        <Tabs defaultValue="job-titles" className="space-y-6">
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-2">
+        <div className="space-y-6">
+          <Tabs defaultValue="job-titles">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-2">
             <TabsList className="grid w-full grid-cols-4 bg-slate-50 rounded-lg p-1">
               <TabsTrigger value="job-titles" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
                 Job Titles
@@ -300,7 +301,7 @@ export function MasterData() {
                     </CardDescription>
                   </div>
                   <Dialog open={isJobTitleModalOpen} onOpenChange={setIsJobTitleModalOpen}>
-                    <DialogTrigger asChild>
+                    <DialogTrigger>
                       <Button className="bg-blue-600 hover:bg-blue-700 text-white shadow-md">
                         <Plus className="h-4 w-4 mr-2" />
                         Add Job Title
@@ -407,7 +408,7 @@ export function MasterData() {
                     </CardDescription>
                   </div>
                   <Dialog open={isWorkGroupModalOpen} onOpenChange={setIsWorkGroupModalOpen}>
-                    <DialogTrigger asChild>
+                    <DialogTrigger>
                       <Button className="bg-green-600 hover:bg-green-700 text-white shadow-md">
                         <Plus className="h-4 w-4 mr-2" />
                         Add Work Group
@@ -514,7 +515,7 @@ export function MasterData() {
                     </CardDescription>
                   </div>
                   <Dialog open={isDepartmentModalOpen} onOpenChange={setIsDepartmentModalOpen}>
-                    <DialogTrigger asChild>
+                    <DialogTrigger>
                       <Button className="bg-purple-600 hover:bg-purple-700 text-white shadow-md">
                         <Plus className="h-4 w-4 mr-2" />
                         Add Department
@@ -621,7 +622,7 @@ export function MasterData() {
                     </CardDescription>
                   </div>
                   <Dialog open={isProjectTypeModalOpen} onOpenChange={setIsProjectTypeModalOpen}>
-                    <DialogTrigger asChild>
+                    <DialogTrigger>
                       <Button className="bg-orange-600 hover:bg-orange-700 text-white shadow-md">
                         <Plus className="h-4 w-4 mr-2" />
                         Add Project Type
@@ -709,8 +710,9 @@ export function MasterData() {
                 )}
               </CardContent>
             </Card>
-          </TabsContent>
-        </Tabs>
+       </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </div>
   );

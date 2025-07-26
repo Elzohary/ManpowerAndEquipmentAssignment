@@ -237,8 +237,8 @@ export function EquipmentDirectory() {
         </div>
         {hasPermission(['admin', 'hr', 'manager']) && (
           <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-            <DialogTrigger asChild>
-              <Button>
+            <DialogTrigger>
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white shadow-md">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Equipment
               </Button>
