@@ -5,7 +5,7 @@ import { Sidebar } from './components/Sidebar';
 import { DashboardHome } from './components/DashboardHome';
 import { DailyManpowerLogs } from './components/DailyManpowerLogs';
 import { OfficeStaffOverview } from './components/OfficeStaffOverview';
-import { EmployeeDirectory } from './components/EmployeeDirectory';
+import EmployeeDirectory from './components/EmployeeDirectory';
 import { MasterData } from './components/MasterData';
 import { Projects } from './components/Projects';
 import { AttendanceTracker } from './components/AttendanceTracker';

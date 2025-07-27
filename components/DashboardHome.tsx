@@ -6,6 +6,7 @@ import { Badge } from './ui/badge';
 import { ChartContainer, ChartTooltipContent } from './ui/chart';
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
 import { Users, Building2, FolderOpen, Calendar } from 'lucide-react';
+import { ConnectionStatus } from './ConnectionStatus';
 
 interface DashboardHomeProps {
   selectedDate: string;
@@ -76,6 +77,9 @@ export function DashboardHome({ selectedDate, onDateChange }: DashboardHomeProps
           />
         </div>
       </div>
+
+      {/* Connection Status */}
+      <ConnectionStatus />
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -6,8 +8,11 @@ import { Badge } from './ui/badge';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Calendar, Users, Wrench, MapPin } from 'lucide-react';
+import { employeesService, workGroupsService } from '../lib/database';
+import type { Employee, WorkGroup } from '../lib/supabase';
 
 interface Assignment {
+  id: string;
   employeeId: string;
   employeeName: string;
   badgeNumber: string;
@@ -15,17 +20,11 @@ interface Assignment {
   workGroup: string;
   equipment: string[];
   location: string;
+  date: string;
+  status: string;
 }
 
-// Mock data
-const mockEmployees = [
-  { id: 'EMP001', name: 'John Smith', badgeNumber: 'EMP001' },
-  { id: 'EMP002', name: 'Jane Doe', badgeNumber: 'EMP002' },
-  { id: 'EMP003', name: 'Mike Johnson', badgeNumber: 'EMP003' },
-];
-
 const mockProjects = ['Project Alpha', 'Project Beta', 'Project Gamma', 'Office Work'];
-const mockWorkGroups = ['Engineering', 'Supervision', 'Quality Control', 'Safety'];
 const mockLocations = ['Main Office', 'Project Site A', 'Project Site B', 'Remote'];
 const mockEquipment = [
   'Laptop Dell XPS 15',
@@ -36,6 +35,8 @@ const mockEquipment = [
 ];
 
 export function SimpleAssignment() {
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [workGroups, setWorkGroups] = useState<WorkGroup[]>([]);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [selectedEmployee, setSelectedEmployee] = useState('');
@@ -44,22 +45,44 @@ export function SimpleAssignment() {
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedEquipment, setSelectedEquipment] = useState<string[]>([]);
 
+  // Load data on component mount
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      const [employeesData, workGroupsData] = await Promise.all([
+        employeesService.getAll(),
+        workGroupsService.getAll()
+      ]);
+      
+      setEmployees(employeesData);
+      setWorkGroups(workGroupsData);
+    } catch (error) {
+      console.error('Error loading data:', error);
+    }
+  };
+
   const handleAddAssignment = () => {
     if (!selectedEmployee || !selectedProject || !selectedWorkGroup || !selectedLocation) {
       return;
     }
 
-    const employee = mockEmployees.find(emp => emp.id === selectedEmployee);
+    const employee = employees.find(emp => emp.id === selectedEmployee);
     if (!employee) return;
 
     const newAssignment: Assignment = {
-      employeeId: employee.id,
-      employeeName: employee.name,
-      badgeNumber: employee.badgeNumber,
+      id: Math.random().toString(36).substr(2, 9),
+      employeeId: selectedEmployee,
+      employeeName: `${employee.first_name} ${employee.last_name}`,
+      badgeNumber: employee.badge_number || employee.id,
       project: selectedProject,
       workGroup: selectedWorkGroup,
+      location: selectedLocation,
       equipment: selectedEquipment,
-      location: selectedLocation
+      date: selectedDate,
+      status: 'Active'
     };
 
     setAssignments([...assignments, newAssignment]);
@@ -119,9 +142,9 @@ export function SimpleAssignment() {
                   <SelectValue placeholder="Choose employee" />
                 </SelectTrigger>
                 <SelectContent>
-                  {mockEmployees.map((employee) => (
+                  {employees.map((employee) => (
                     <SelectItem key={employee.id} value={employee.id}>
-                      {employee.name} ({employee.badgeNumber})
+                      {employee.first_name} {employee.last_name} ({employee.badge_number || employee.id})
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -151,9 +174,9 @@ export function SimpleAssignment() {
                   <SelectValue placeholder="Choose work group" />
                 </SelectTrigger>
                 <SelectContent>
-                  {mockWorkGroups.map((group) => (
-                    <SelectItem key={group} value={group}>
-                      {group}
+                  {workGroups.map((group) => (
+                    <SelectItem key={group.id} value={group.name}>
+                      {group.name}
                     </SelectItem>
                   ))}
                 </SelectContent>

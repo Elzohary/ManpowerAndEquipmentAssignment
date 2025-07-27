@@ -1,342 +1,214 @@
-import { supabase } from './supabase';
-import type { JobTitle, WorkGroup, Department, ProjectType } from './supabase';
+import { supabase, type JobTitle, type WorkGroup, type Department, type ProjectType, type Employee, isSupabaseConfigured } from './supabase';
 
-// Helper function to check if Supabase is properly configured
-const isSupabaseConfigured = () => {
-  return import.meta.env.VITE_SUPABASE_URL && 
-         import.meta.env.VITE_SUPABASE_ANON_KEY &&
-         import.meta.env.VITE_SUPABASE_URL !== 'https://placeholder.supabase.co';
-};
-
-// Mock data for when Supabase isn't configured
+// Mock data for when Supabase is not configured
 const mockJobTitles: JobTitle[] = [
-  { id: '1', name: 'Senior Software Engineer', description: 'Experienced software developer with 5+ years experience', created_at: new Date().toISOString() },
-  { id: '2', name: 'Frontend Developer', description: 'Specializes in user interface development', created_at: new Date().toISOString() },
-  { id: '3', name: 'Site Supervisor', description: 'Oversees construction and field operations', created_at: new Date().toISOString() }
+  { id: '1', name: 'Software Engineer', description: 'Develops and maintains software applications', created_at: '2023-01-01T00:00:00Z' },
+  { id: '2', name: 'Product Manager', description: 'Manages product development and strategy', created_at: '2023-01-01T00:00:00Z' },
+  { id: '3', name: 'UX Designer', description: 'Designs user experiences and interfaces', created_at: '2023-01-01T00:00:00Z' },
+  { id: '4', name: 'Data Analyst', description: 'Analyzes data to provide business insights', created_at: '2023-01-01T00:00:00Z' },
 ];
 
 const mockWorkGroups: WorkGroup[] = [
-  { id: '1', name: 'Engineering', description: 'Software development and technical roles', created_at: new Date().toISOString() },
-  { id: '2', name: 'Operations', description: 'Field operations and project management', created_at: new Date().toISOString() },
-  { id: '3', name: 'Administration', description: 'Administrative and support functions', created_at: new Date().toISOString() }
+  { id: '1', name: 'Engineering', description: 'Software development team', created_at: '2023-01-01T00:00:00Z' },
+  { id: '2', name: 'Product', description: 'Product management and strategy', created_at: '2023-01-01T00:00:00Z' },
+  { id: '3', name: 'Design', description: 'User experience and visual design', created_at: '2023-01-01T00:00:00Z' },
+  { id: '4', name: 'Analytics', description: 'Data analysis and business intelligence', created_at: '2023-01-01T00:00:00Z' },
 ];
 
 const mockDepartments: Department[] = [
-  { id: '1', name: 'Engineering', description: 'Software development and technical operations', created_at: new Date().toISOString() },
-  { id: '2', name: 'HR', description: 'Human resources and employee management', created_at: new Date().toISOString() },
-  { id: '3', name: 'Operations', description: 'Field operations and project management', created_at: new Date().toISOString() }
+  { id: '1', name: 'Technology', description: 'IT and software development', created_at: '2023-01-01T00:00:00Z' },
+  { id: '2', name: 'Marketing', description: 'Marketing and communications', created_at: '2023-01-01T00:00:00Z' },
+  { id: '3', name: 'Sales', description: 'Sales and business development', created_at: '2023-01-01T00:00:00Z' },
+  { id: '4', name: 'Operations', description: 'Operations and administration', created_at: '2023-01-01T00:00:00Z' },
 ];
 
 const mockProjectTypes: ProjectType[] = [
-  { id: '1', name: 'Web Development', description: 'Website and web application projects', created_at: new Date().toISOString() },
-  { id: '2', name: 'Mobile Development', description: 'Mobile application projects', created_at: new Date().toISOString() },
-  { id: '3', name: 'Infrastructure', description: 'System and infrastructure projects', created_at: new Date().toISOString() }
+  { id: '1', name: 'Web Development', description: 'Web application projects', created_at: '2023-01-01T00:00:00Z' },
+  { id: '2', name: 'Mobile App', description: 'Mobile application development', created_at: '2023-01-01T00:00:00Z' },
+  { id: '3', name: 'Data Analysis', description: 'Data analysis and reporting projects', created_at: '2023-01-01T00:00:00Z' },
+  { id: '4', name: 'Marketing Campaign', description: 'Marketing and promotional campaigns', created_at: '2023-01-01T00:00:00Z' },
 ];
 
-// Job Titles Service
-export const jobTitlesService = {
-  async getAll(): Promise<JobTitle[]> {
-    if (!isSupabaseConfigured()) {
-      console.warn('Supabase not configured, using mock data');
-      return mockJobTitles;
-    }
-    
-    const { data, error } = await supabase
-      .from('job_titles')
-      .select('*')
-      .order('name')
-    
-    if (error) throw error
-    return data || []
+const mockEmployees: Employee[] = [
+  {
+    id: '1',
+    first_name: 'John',
+    last_name: 'Doe',
+    email: 'john.doe@company.com',
+    phone: '+1-555-0123',
+    badge_number: 'EMP001',
+    hire_date: '2023-01-15',
+    job_title_id: '1',
+    work_group_id: '1',
+    department_id: '1',
+    project_type_id: '1',
+    is_active: true,
+    created_at: '2023-01-15T00:00:00Z',
+    updated_at: '2023-01-15T00:00:00Z'
   },
-
-  async create(jobTitle: Omit<JobTitle, 'id' | 'created_at' | 'updated_at'>): Promise<JobTitle> {
-    if (!isSupabaseConfigured()) {
-      const newItem = { 
-        ...jobTitle, 
-        id: Date.now().toString(), 
-        created_at: new Date().toISOString() 
-      };
-      mockJobTitles.unshift(newItem);
-      return newItem;
-    }
-    
-    const { data, error } = await supabase
-      .from('job_titles')
-      .insert([jobTitle])
-      .select()
-      .single()
-    
-    if (error) throw error
-    return data
+  {
+    id: '2',
+    first_name: 'Jane',
+    last_name: 'Smith',
+    email: 'jane.smith@company.com',
+    phone: '+1-555-0124',
+    badge_number: 'EMP002',
+    hire_date: '2023-02-01',
+    job_title_id: '2',
+    work_group_id: '2',
+    department_id: '2',
+    project_type_id: '2',
+    is_active: true,
+    created_at: '2023-02-01T00:00:00Z',
+    updated_at: '2023-02-01T00:00:00Z'
   },
-
-  async update(id: string, updates: Partial<Omit<JobTitle, 'id' | 'created_at' | 'updated_at'>>): Promise<JobTitle> {
-    if (!isSupabaseConfigured()) {
-      const index = mockJobTitles.findIndex(item => item.id === id);
-      if (index !== -1) {
-        mockJobTitles[index] = { ...mockJobTitles[index], ...updates };
-        return mockJobTitles[index];
-      }
-      throw new Error('Job title not found');
-    }
-    
-    const { data, error } = await supabase
-      .from('job_titles')
-      .update({ ...updates, updated_at: new Date().toISOString() })
-      .eq('id', id)
-      .select()
-      .single()
-    
-    if (error) throw error
-    return data
-  },
-
-  async delete(id: string): Promise<void> {
-    if (!isSupabaseConfigured()) {
-      const index = mockJobTitles.findIndex(item => item.id === id);
-      if (index !== -1) {
-        mockJobTitles.splice(index, 1);
-      }
-      return;
-    }
-    
-    const { error } = await supabase
-      .from('job_titles')
-      .delete()
-      .eq('id', id)
-    
-    if (error) throw error
+  {
+    id: '3',
+    first_name: 'Mike',
+    last_name: 'Johnson',
+    email: 'mike.johnson@company.com',
+    phone: '+1-555-0125',
+    badge_number: 'EMP003',
+    hire_date: '2023-03-10',
+    job_title_id: '3',
+    work_group_id: '3',
+    department_id: '3',
+    project_type_id: '3',
+    is_active: true,
+    created_at: '2023-03-10T00:00:00Z',
+    updated_at: '2023-03-10T00:00:00Z'
   }
+];
+
+// Generic service creator that handles both Supabase and mock data
+function createService<T extends { id: string }>(tableName: string, mockData: T[]) {
+  return {
+    async getAll(): Promise<T[]> {
+      if (!isSupabaseConfigured()) {
+        console.log(`Using mock data for ${tableName}`);
+        return Promise.resolve([...mockData]);
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from(tableName)
+          .select('*')
+          .order('name', { ascending: true });
+
+        if (error) {
+          console.error(`Error fetching ${tableName}:`, error);
+          console.log(`Falling back to mock data for ${tableName}`);
+          return [...mockData];
+        }
+
+        return data || [];
+      } catch (err) {
+        console.error(`Error fetching ${tableName}:`, err);
+        console.log(`Falling back to mock data for ${tableName}`);
+        return [...mockData];
+      }
+    },
+
+    async create(item: Omit<T, 'id' | 'created_at' | 'updated_at'>): Promise<T> {
+      if (!isSupabaseConfigured()) {
+        console.log(`Using mock data for creating ${tableName}`);
+        const newItem = {
+          ...item,
+          id: Math.random().toString(36).substr(2, 9),
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        } as unknown as T;
+        mockData.push(newItem);
+        return Promise.resolve(newItem);
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from(tableName)
+          .insert([item])
+          .select()
+          .single();
+
+        if (error) {
+          console.error(`Error creating ${tableName}:`, error);
+          throw error;
+        }
+
+        return data;
+      } catch (err) {
+        console.error(`Error creating ${tableName}:`, err);
+        throw err;
+      }
+    },
+
+    async update(id: string, updates: Partial<Omit<T, 'id' | 'created_at'>>): Promise<T> {
+      if (!isSupabaseConfigured()) {
+        console.log(`Using mock data for updating ${tableName}`);
+        const index = mockData.findIndex(item => item.id === id);
+        if (index === -1) {
+          throw new Error(`${tableName} not found`);
+        }
+        const updatedItem = {
+          ...mockData[index],
+          ...updates,
+          updated_at: new Date().toISOString()
+        } as T;
+        mockData[index] = updatedItem;
+        return Promise.resolve(updatedItem);
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from(tableName)
+          .update({ ...updates, updated_at: new Date().toISOString() })
+          .eq('id', id)
+          .select()
+          .single();
+
+        if (error) {
+          console.error(`Error updating ${tableName}:`, error);
+          throw error;
+        }
+
+        return data;
+      } catch (err) {
+        console.error(`Error updating ${tableName}:`, err);
+        throw err;
+      }
+    },
+
+    async delete(id: string): Promise<void> {
+      if (!isSupabaseConfigured()) {
+        console.log(`Using mock data for deleting ${tableName}`);
+        const index = mockData.findIndex(item => item.id === id);
+        if (index === -1) {
+          throw new Error(`${tableName} not found`);
+        }
+        mockData.splice(index, 1);
+        return Promise.resolve();
+      }
+
+      try {
+        const { error } = await supabase
+          .from(tableName)
+          .delete()
+          .eq('id', id);
+
+        if (error) {
+          console.error(`Error deleting ${tableName}:`, error);
+          throw error;
+        }
+      } catch (err) {
+        console.error(`Error deleting ${tableName}:`, err);
+        throw err;
+      }
+    }
+  };
 }
 
-// Work Groups Service
-export const workGroupsService = {
-  async getAll(): Promise<WorkGroup[]> {
-    if (!isSupabaseConfigured()) {
-      console.warn('Supabase not configured, using mock data');
-      return mockWorkGroups;
-    }
-    
-    const { data, error } = await supabase
-      .from('work_groups')
-      .select('*')
-      .order('name')
-    
-    if (error) throw error
-    return data || []
-  },
-
-  async create(workGroup: Omit<WorkGroup, 'id' | 'created_at' | 'updated_at'>): Promise<WorkGroup> {
-    if (!isSupabaseConfigured()) {
-      const newItem = { 
-        ...workGroup, 
-        id: Date.now().toString(), 
-        created_at: new Date().toISOString() 
-      };
-      mockWorkGroups.unshift(newItem);
-      return newItem;
-    }
-    
-    const { data, error } = await supabase
-      .from('work_groups')
-      .insert([workGroup])
-      .select()
-      .single()
-    
-    if (error) throw error
-    return data
-  },
-
-  async update(id: string, updates: Partial<Omit<WorkGroup, 'id' | 'created_at' | 'updated_at'>>): Promise<WorkGroup> {
-    if (!isSupabaseConfigured()) {
-      const index = mockWorkGroups.findIndex(item => item.id === id);
-      if (index !== -1) {
-        mockWorkGroups[index] = { ...mockWorkGroups[index], ...updates };
-        return mockWorkGroups[index];
-      }
-      throw new Error('Work group not found');
-    }
-    
-    const { data, error } = await supabase
-      .from('work_groups')
-      .update({ ...updates, updated_at: new Date().toISOString() })
-      .eq('id', id)
-      .select()
-      .single()
-    
-    if (error) throw error
-    return data
-  },
-
-  async delete(id: string): Promise<void> {
-    if (!isSupabaseConfigured()) {
-      const index = mockWorkGroups.findIndex(item => item.id === id);
-      if (index !== -1) {
-        mockWorkGroups.splice(index, 1);
-      }
-      return;
-    }
-    
-    const { error } = await supabase
-      .from('work_groups')
-      .delete()
-      .eq('id', id)
-    
-    if (error) throw error
-  }
-}
-
-// Departments Service
-export const departmentsService = {
-  async getAll(): Promise<Department[]> {
-    if (!isSupabaseConfigured()) {
-      console.warn('Supabase not configured, using mock data');
-      return mockDepartments;
-    }
-    
-    const { data, error } = await supabase
-      .from('departments')
-      .select('*')
-      .order('name')
-    
-    if (error) throw error
-    return data || []
-  },
-
-  async create(department: Omit<Department, 'id' | 'created_at' | 'updated_at'>): Promise<Department> {
-    if (!isSupabaseConfigured()) {
-      const newItem = { 
-        ...department, 
-        id: Date.now().toString(), 
-        created_at: new Date().toISOString() 
-      };
-      mockDepartments.unshift(newItem);
-      return newItem;
-    }
-    
-    const { data, error } = await supabase
-      .from('departments')
-      .insert([department])
-      .select()
-      .single()
-    
-    if (error) throw error
-    return data
-  },
-
-  async update(id: string, updates: Partial<Omit<Department, 'id' | 'created_at' | 'updated_at'>>): Promise<Department> {
-    if (!isSupabaseConfigured()) {
-      const index = mockDepartments.findIndex(item => item.id === id);
-      if (index !== -1) {
-        mockDepartments[index] = { ...mockDepartments[index], ...updates };
-        return mockDepartments[index];
-      }
-      throw new Error('Department not found');
-    }
-    
-    const { data, error } = await supabase
-      .from('departments')
-      .update({ ...updates, updated_at: new Date().toISOString() })
-      .eq('id', id)
-      .select()
-      .single()
-    
-    if (error) throw error
-    return data
-  },
-
-  async delete(id: string): Promise<void> {
-    if (!isSupabaseConfigured()) {
-      const index = mockDepartments.findIndex(item => item.id === id);
-      if (index !== -1) {
-        mockDepartments.splice(index, 1);
-      }
-      return;
-    }
-    
-    const { error } = await supabase
-      .from('departments')
-      .delete()
-      .eq('id', id)
-    
-    if (error) throw error
-  }
-}
-
-// Project Types Service
-export const projectTypesService = {
-  async getAll(): Promise<ProjectType[]> {
-    if (!isSupabaseConfigured()) {
-      console.warn('Supabase not configured, using mock data');
-      return mockProjectTypes;
-    }
-    
-    const { data, error } = await supabase
-      .from('project_types')
-      .select('*')
-      .order('name')
-    
-    if (error) throw error
-    return data || []
-  },
-
-  async create(projectType: Omit<ProjectType, 'id' | 'created_at' | 'updated_at'>): Promise<ProjectType> {
-    if (!isSupabaseConfigured()) {
-      const newItem = { 
-        ...projectType, 
-        id: Date.now().toString(), 
-        created_at: new Date().toISOString() 
-      };
-      mockProjectTypes.unshift(newItem);
-      return newItem;
-    }
-    
-    const { data, error } = await supabase
-      .from('project_types')
-      .insert([projectType])
-      .select()
-      .single()
-    
-    if (error) throw error
-    return data
-  },
-
-  async update(id: string, updates: Partial<Omit<ProjectType, 'id' | 'created_at' | 'updated_at'>>): Promise<ProjectType> {
-    if (!isSupabaseConfigured()) {
-      const index = mockProjectTypes.findIndex(item => item.id === id);
-      if (index !== -1) {
-        mockProjectTypes[index] = { ...mockProjectTypes[index], ...updates };
-        return mockProjectTypes[index];
-      }
-      throw new Error('Project type not found');
-    }
-    
-    const { data, error } = await supabase
-      .from('project_types')
-      .update({ ...updates, updated_at: new Date().toISOString() })
-      .eq('id', id)
-      .select()
-      .single()
-    
-    if (error) throw error
-    return data
-  },
-
-  async delete(id: string): Promise<void> {
-    if (!isSupabaseConfigured()) {
-      const index = mockProjectTypes.findIndex(item => item.id === id);
-      if (index !== -1) {
-        mockProjectTypes.splice(index, 1);
-      }
-      return;
-    }
-    
-    const { error } = await supabase
-      .from('project_types')
-      .delete()
-      .eq('id', id)
-    
-    if (error) throw error
-  }
-}
+// Export services
+export const jobTitlesService = createService<JobTitle>('job_titles', mockJobTitles);
+export const workGroupsService = createService<WorkGroup>('work_groups', mockWorkGroups);
+export const departmentsService = createService<Department>('departments', mockDepartments);
+export const projectTypesService = createService<ProjectType>('project_types', mockProjectTypes);
+export const employeesService = createService<Employee>('employees', mockEmployees);
